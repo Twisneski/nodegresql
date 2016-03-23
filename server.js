@@ -59,6 +59,26 @@ app.get('/invoices', (req, res) => {
     .then(invoices => res.send(invoices));
 });
 
+app.get('/invoices/:id', (req, res) => {
+  models.Invoice.findOne({
+      where: {
+        InvoiceId: req.params.id
+      }
+    })
+    .then(invoice => res.send(invoice));
+});
+
+app.get('/invoices/:id/customer', (req, res) => {
+  models.Invoice.findOne({
+      where: {
+        InvoiceId: req.params.id
+      }
+    })
+    //.then(invoice => console.log(invoice.getAssociation()))
+    .then(invoice => invoice.getCustomer())
+    .then(customer => res.send(customer));
+});
+
 app.get('/customers', (req, res) => {
   models.Customer.findAll()
     .then(customers => res.send(customers));
@@ -77,14 +97,50 @@ app.get('/customers/:id/invoices', (req, res) => {
     where: {
       CustomerId: req.params.id
     },
-    include: models.Invoice
   })
+  .then(customer => customer.getInvoices())
   .then(invoices => res.send(invoices));
 });
+
+
+//album titles
+app.get('/album/:id/title', (req, res) => {
+  models.Album.findOne({
+    where: {
+      AlbumId: req.params.id
+    },
+  })
+  .then(album => album.getTitle())
+  .then(title => res.send(title));
+});
+
+// //artist name
+app.get('/artist/:id/name', (req, res) => {
+  models.Artist.findOne({
+    where: {
+      ArtistId: req.params.id
+    },
+  })
+  .then(artist => artist.getName())
+  .then(name => res.send(name));
+});
+
+// //employee first name - model completed
+app.get('/employee/:id/firstname', (req, res) => {
+  models.Employee.findOne({
+    where: {
+      EmployeeId: req.params.id
+    },
+  })
+  .then(employee => employee.getFirstName())
+  .then(employee => res.send(firstname));
+});
+
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
+
 
 
 
